@@ -1,11 +1,11 @@
-class UserModel {
-  String id;
+class User {
+  int id;
   String firstName;
   String lastName;
   String phoneNumber;
   String email;
 
-  UserModel(
+  User(
       {required this.id,
       required this.firstName,
       required this.lastName,
@@ -21,23 +21,23 @@ class UserModel {
     return name[0].toUpperCase() + name.substring(1).toLowerCase();
   }
 
-  factory UserModel.fromJson(Map<String, dynamic> json) {
-    return UserModel(
+  factory User.fromJson(Map<String, dynamic> json) {
+    return User(
       firstName: json['first_name'] ?? '',
       lastName: json['last_name'] ?? '',
       phoneNumber: json['phone_number'] ?? '',
       email: json['email'] ?? '',
-      id: '',
+      id: json['id'] ?? '',
     );
   }
 
-  static UserModel empty() {
-    return UserModel(
+  static User empty() {
+    return User(
       firstName: '',
       lastName: '',
       phoneNumber: '',
       email: '',
-      id: '',
+      id: 0,
     );
   }
 }

@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
-import 'package:post_app/controller/register_controller.dart';
+import 'package:post_app/controller/auth_controllers/register_controller.dart';
 import 'package:post_app/screens/login_register_screen/widgets/social_buttons.dart';
 
 class RegisterForm extends StatelessWidget {
@@ -12,7 +12,7 @@ class RegisterForm extends StatelessWidget {
   Widget build(BuildContext context) {
     final registerController = Get.put(RegisterController());
     return Form(
-        key: registerController.regiterFormKey,
+        key: registerController.registerFormKey,
         child: Column(children: [
           // First & Last Name
           Row(

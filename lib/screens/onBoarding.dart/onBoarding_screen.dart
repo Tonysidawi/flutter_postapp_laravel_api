@@ -62,7 +62,7 @@ class OnBoardingScreen extends StatelessWidget {
                       ),
                     ),
                     onPressed: () {
-                      Get.to(LoginScreen());
+                      Get.toNamed(RouteName.login);
                       // Get.toNamed("/login");
                       // Get.toNamed(RouteName.getLogin());
                     },

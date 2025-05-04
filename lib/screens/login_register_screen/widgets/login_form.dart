@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
-import 'package:post_app/controller/login_controller.dart';
+import 'package:post_app/controller/auth_controllers/login_controller.dart';
 import 'package:post_app/screens/login_register_screen/register_screen.dart';
 
 class LogInForm extends StatelessWidget {
@@ -105,18 +105,20 @@ class LogInForm extends StatelessWidget {
               height: 24 / 2,
             ),
 
-            SizedBox(
-              width: double.infinity,
-              height: 56,
-              child: ElevatedButton(
-                onPressed: () => loginController.login(),
-                child: loginController.isLoading.value
-                    ? const CircularProgressIndicator(
-                        color: Colors.white,
-                      )
-                    : const Text(
-                        'Sign In',
-                      ),
+            Obx(
+              () => SizedBox(
+                width: double.infinity,
+                height: 56,
+                child: ElevatedButton(
+                  onPressed: () => loginController.login(),
+                  child: loginController.isLoading.value
+                      ? const CircularProgressIndicator(
+                          color: Colors.white,
+                        )
+                      : const Text(
+                          'Sign In',
+                        ),
+                ),
               ),
             ),
 

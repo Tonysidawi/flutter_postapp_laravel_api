@@ -1,25 +1,18 @@
 import 'dart:convert';
-
-import 'package:flutter/widgets.dart';
+import 'package:flutter/material.dart';
 import 'package:flutter_native_splash/flutter_native_splash.dart';
 import 'package:get/get.dart';
 import 'package:get_storage/get_storage.dart';
 import 'package:http/http.dart' as http;
 import 'package:post_app/models/userModel.dart';
 import 'package:post_app/routes/route_name.dart';
-import 'package:post_app/screens/homepage_screen.dart';
-
-import 'package:post_app/screens/login_register_screen/login_screen.dart';
-import 'package:post_app/screens/onBoarding.dart/onBoarding_screen.dart';
 
 class AuthenticationRepository extends GetxController {
   static AuthenticationRepository get instance => Get.find();
 
   final deviceStorage = GetStorage();
   final token = ''.obs;
-  Rx<UserModel> user = UserModel.empty().obs;
-  final email = ''.obs;
-  final password = ''.obs;
+  Rx<User> user = User.empty().obs;
 
   @override
   void onReady() {
@@ -33,11 +26,11 @@ class AuthenticationRepository extends GetxController {
     final storedtoken = deviceStorage.read('bearer_token');
     if (storedtoken != null) {
       token.value = storedtoken;
-      Get.offAllNamed(RouteName.getInitial());
+      Get.offAllNamed(RouteName.initial);
     } else {
       deviceStorage.read('first_time') != true
-          ? Get.offAllNamed(RouteName.getOnBoarding())
-          : Get.offAllNamed(RouteName.getLogin());
+          ? Get.offAllNamed(RouteName.onBoarding)
+          : Get.offAllNamed(RouteName.login);
       deviceStorage.write('first_time', true);
     }
     FlutterNativeSplash.remove();
@@ -58,7 +51,7 @@ class AuthenticationRepository extends GetxController {
         Uri.parse('http://10.0.2.2:8000/api/login'),
         headers: {
           'Accept': 'application/json',
-          'Content-Type': 'application/json', // Important!
+          'Content-Type': 'application/json',
         },
         body: json.encode(data),
       );
@@ -66,20 +59,31 @@ class AuthenticationRepository extends GetxController {
       if (response.statusCode == 200) {
         final responseData = json.decode(response.body);
         final userData = responseData['user'];
-        user.value = UserModel.fromJson(userData);
-        token.value = responseData['token'];
+        user.value = User.fromJson(userData);
+        token.value = responseData['access_token'];
+        print(token.value);
         deviceStorage.write('bearer_token', token.value);
 
-        Get.toNamed(RouteName.getInitial());
+        Get.toNamed(RouteName.initial);
 
-        print('Login successful: $responseData');
+        if (responseData['success'] == true) {
+          Get.snackbar('Congratulations', 'Your are logged in successfully',
+              colorText: Colors.white, backgroundColor: Colors.green);
+        }
+
+        // print('Login successful: $responseData');
         // You can handle token storage or navigation here
+      } else if (response.statusCode == 401) {
+        final errorData = json.decode(response.body);
+        Get.snackbar('Error', 'Login failed: ${errorData['message']}',
+            colorText: Colors.white, backgroundColor: Colors.redAccent);
       } else {
         final errorData = json.decode(response.body);
-        print('Login failed: ${errorData['message']}');
+        Get.snackbar('Error', 'Login failed: ${errorData['message']}',
+            colorText: Colors.white, backgroundColor: Colors.redAccent);
       }
     } catch (e) {
-      print('An error occurred: $e');
+      // print('An error occurred: $e');
     }
   }
 
@@ -113,10 +117,16 @@ class AuthenticationRepository extends GetxController {
     if (response.statusCode == 200) {
       final responseData = json.decode(response.body);
       print('Register successful: $responseData');
+      await authLogin(email: email, password: password);
       // You can handle token storage or navigation here
     } else {
       final errorData = json.decode(response.body);
       print('Register failed: ${errorData['message']}');
     }
+  }
+
+  Future<void> logout() async {
+    deviceStorage.remove('bearer_token');
+    Get.offAllNamed(RouteName.login);
   }
 }

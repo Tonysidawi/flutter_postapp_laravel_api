@@ -16,7 +16,7 @@ class RegisterController extends GetxController {
   final hidePassword2 = true.obs;
 
   final authController = Get.find<AuthenticationRepository>();
-  GlobalKey<FormState> regiterFormKey = GlobalKey<FormState>();
+  final registerFormKey = GlobalKey<FormState>();
 
   Future<void> register() async {
     try {
