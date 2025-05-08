@@ -26,6 +26,9 @@ class AuthenticationRepository extends GetxController {
     final storedtoken = deviceStorage.read('bearer_token');
     if (storedtoken != null) {
       token.value = storedtoken;
+      final email = deviceStorage.read('remember_my_email');
+      final password = deviceStorage.read('remember_my_password');
+      await authLogin(email: email, password: password);
       Get.offAllNamed(RouteName.initial);
     } else {
       deviceStorage.read('first_time') != true
@@ -63,6 +66,8 @@ class AuthenticationRepository extends GetxController {
         token.value = responseData['access_token'];
         print(token.value);
         deviceStorage.write('bearer_token', token.value);
+        deviceStorage.write('email', email);
+        deviceStorage.write('read', password);
 
         Get.toNamed(RouteName.initial);
 

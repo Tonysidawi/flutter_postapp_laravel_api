@@ -6,7 +6,7 @@ class PostModel {
   final String title;
   final int bannerId;
   final String content;
-  final User user;
+  final User? user;
 
   PostModel({
     required this.id,
@@ -14,7 +14,7 @@ class PostModel {
     required this.title,
     required this.bannerId,
     required this.content,
-    required this.user,
+    this.user,
   });
 
   factory PostModel.fromJson(Map<String, dynamic> json) {

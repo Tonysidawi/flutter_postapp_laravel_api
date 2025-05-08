@@ -139,11 +139,7 @@ class InfoRepository extends GetxController {
   }) async {
     try {
       final token = localstorage.read('bearer_token');
-      print('this is the token: $token');
-      print(title);
-      print(body);
-      print(bannerId);
-      print(userId);
+
       var data = {
         'title': title,
         'body': body,
@@ -169,7 +165,8 @@ class InfoRepository extends GetxController {
         final responseBody = json.decode(response.body);
         print('error:response $responseBody');
       } else {
-        throw Exception('Failed to load banners: ${response.statusCode}');
+        final responseBody = json.decode(response.body);
+        Get.snackbar('error', '$responseBody');
       }
     } catch (e) {
       throw Exception('Failed to fetch banners: $e');
@@ -204,7 +201,9 @@ class InfoRepository extends GetxController {
   Future<void> updatePost(
       {required String title,
       required String body,
-      required int bannerId}) async {
+      required int postId,
+      required int bannerId,
+      required int userId}) async {
     try {
       final token = localstorage.read('bearer_token');
 
@@ -213,7 +212,7 @@ class InfoRepository extends GetxController {
         'body': body,
       };
       final response = await http.put(
-        Uri.parse('http://10.0.2.2:8000/api/banners/$bannerId'),
+        Uri.parse('http://10.0.2.2:8000/api/posts/$postId'),
         headers: {
           'Accept': 'application/json',
           'Authorization': 'Bearer $token',
@@ -228,6 +227,9 @@ class InfoRepository extends GetxController {
         await fetchAllBanners();
 
         Get.toNamed('/home');
+      } else if (response.statusCode == 403) {
+        final responseBody = json.decode(response.body);
+        print("Banner created: $responseBody");
       } else {
         throw Exception('Failed to load banners: ${response.statusCode}');
       }

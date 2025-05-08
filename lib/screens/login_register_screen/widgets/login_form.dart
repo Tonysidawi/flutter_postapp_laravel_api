@@ -81,10 +81,15 @@ class LogInForm extends StatelessWidget {
               children: [
                 Row(
                   children: [
-                    Checkbox(
-                      activeColor: Colors.blueAccent,
-                      value: true,
-                      onChanged: (value) {},
+                    Obx(
+                      () => Checkbox(
+                        activeColor: Colors.blueAccent,
+                        value: loginController.rememberMe.value,
+                        onChanged: (value) {
+                          loginController.rememberMe.value =
+                              !loginController.rememberMe.value;
+                        },
+                      ),
                     ),
                     // Remember me
                     const Text('Remember Me'),

@@ -11,6 +11,7 @@ class UpdateBannerController extends GetxController {
   final isLoading = false.obs;
   final title = TextEditingController();
   final body = TextEditingController();
+
   final _infoRepo = InfoRepository.instance;
   final fetchBannerController = FetchBannerController.instance;
   GlobalKey<FormState> updateBannerFormKey = GlobalKey<FormState>();

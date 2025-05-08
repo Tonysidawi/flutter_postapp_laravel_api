@@ -2,8 +2,10 @@ import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:post_app/controller/banner_controllers/bannerController.dart';
 import 'package:post_app/controller/banner_controllers/update_banner.dart';
+import 'package:post_app/controller/post_controllers/update_post.dart';
 import 'package:post_app/controller/user_controller/user_controller.dart';
 import 'package:post_app/models/bannerModel.dart';
+import 'package:post_app/models/postModel.dart';
 
 class UpdatePostPage extends StatelessWidget {
   const UpdatePostPage({super.key});
@@ -11,25 +13,29 @@ class UpdatePostPage extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     // Initialize controller
-    final updateController = Get.put(UpdateBannerController());
+    final updatePostController = Get.put(UpdatePostController());
 
     // Get arguments
     final args = Get.arguments;
-    final int? bannerId = args?['id'];
+    final int? bannerId = args?['banner_id'];
+    final int? postId = args?['post_id'];
     final String? title = args?['title'];
     final String? body = args?['body'];
+    final userId = UserController.instance.user.value.id;
 
-    updateController.initialBannerData(BannerModel(
-      id: bannerId!,
-      title: title!,
-      body: body!,
-      userId: 0,
-      posts: [],
-    ));
+    updatePostController.initialPostData(
+      PostModel(
+        id: bannerId!,
+        title: title!,
+        content: body!,
+        userId: 0,
+        bannerId: 0,
+      ),
+    );
 
     return Scaffold(
       appBar: AppBar(
-        title: Text("Update Banner"),
+        title: Text("Update Post"),
         leading: IconButton(
           onPressed: () => Get.back(),
           icon: Icon(Icons.arrow_back, color: Colors.black),
@@ -40,15 +46,15 @@ class UpdatePostPage extends StatelessWidget {
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            Text("Let’s update your Banner",
+            Text("Let’s update your Post",
                 style: Theme.of(context).textTheme.headlineMedium),
             SizedBox(height: 24),
             Form(
-              key: updateController.updateBannerFormKey,
+              key: updatePostController.updatePostFormKey,
               child: Column(
                 children: [
                   TextFormField(
-                    controller: updateController.title,
+                    controller: updatePostController.title,
                     decoration: InputDecoration(
                       labelText: 'Title of your Banner',
                       border: OutlineInputBorder(
@@ -58,7 +64,7 @@ class UpdatePostPage extends StatelessWidget {
                   ),
                   SizedBox(height: 24),
                   TextFormField(
-                    controller: updateController.body,
+                    controller: updatePostController.body,
                     maxLines: 3,
                     decoration: InputDecoration(
                       labelText: 'Description of your banner',
@@ -72,11 +78,11 @@ class UpdatePostPage extends StatelessWidget {
                         width: double.infinity,
                         height: 56,
                         child: ElevatedButton(
-                          onPressed: () =>
-                              updateController.updateBanner(args?['id']),
+                          onPressed: () => updatePostController.updatePost(
+                              postId, userId, bannerId),
                           // return to previous page
 
-                          child: updateController.isLoading.value
+                          child: updatePostController.isLoading.value
                               ? CircularProgressIndicator()
                               : Text("Update Banner"),
                         ),

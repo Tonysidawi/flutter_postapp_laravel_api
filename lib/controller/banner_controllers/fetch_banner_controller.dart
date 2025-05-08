@@ -1,3 +1,4 @@
+import 'package:flutter/widgets.dart';
 import 'package:get/get.dart';
 import 'package:post_app/data/info_repository/info_repository.dart';
 import 'package:post_app/models/bannerModel.dart';
@@ -6,12 +7,17 @@ class FetchBannerController extends GetxController {
   static FetchBannerController get instance => Get.find();
   final RxList<BannerModel> banners = <BannerModel>[].obs;
   RxBool isLoading = false.obs;
+  final RxInt currentPage = 0.obs;
   final infoRepo = Get.put(InfoRepository());
 
   @override
   void onInit() {
     fetchAllBanners();
     super.onInit();
+  }
+
+  void updateCurrentPage(int index) {
+    currentPage.value = index;
   }
 
   Future<void> fetchAllBanners() async {
@@ -21,7 +27,10 @@ class FetchBannerController extends GetxController {
 
       // Update the banners list
       banners.assignAll(fetchedBanners);
-      isLoading(false);
+      // Reset current page and controller position
+      currentPage.value = 0;
+
+      isLoading.value = false;
     } catch (e) {
       isLoading.value = false;
     }
